@@ -9,7 +9,7 @@ Notable differences from esphome-p1reader are:
 
 ## ESPHome version
 > [!WARNING]
-> Custom components, such as this one, are deprecated by ESPHome according to [this page](https://esphome.io/components/sensor/custom) and are expected to stop working in future releases of ESPHome. The current version is tested with ESPHome version `2023.9.0`.
+> Custom components, such as this one, are deprecated by ESPHome according to [this page](https://esphome.io/components/sensor/custom) and are expected to stop working in future releases of ESPHome. The current version is tested with ESPHome version `2023.12.5`.
 
 If anyone has experience converting a custom component into an [External component](https://esphome.io/components/external_components), feel free to contribute!
 
