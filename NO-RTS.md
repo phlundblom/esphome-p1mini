@@ -19,16 +19,17 @@ If you built your ESP based on the original esphome-p1reader or if you bought a 
 ## Disabling the RTS signal
 By changing this, the RTS signal (if connected) will be set constantly high, and the p1mini will work slightly differently internally.
 
-In the yaml file, find this line:
+In the yaml file, never set p1_rts low. Simply find and remove this line (in two places):
 
 ```
-id(p1_period),
+- switch.turn_off: p1_rts
 ```
 
-and replace it with this:
+If RTS is not connected to a GPIO, p1_rts and all references to it can be removed from the yaml.
+
+Also, the minimum update period needs to be set to zero:
 
 ```
-nullptr,
+minimum_period: 0s
 ```
 
-This also means that the number template `p1_period` is not used, so it could be removed or set to internal.
