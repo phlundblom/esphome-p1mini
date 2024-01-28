@@ -5,8 +5,6 @@ substitutions:
 
 esphome:
   name: ${device_name}
-  includes:
-    - p1mini.h
 
 esp8266:
   board: d1_mini
@@ -25,7 +23,7 @@ captive_portal:
 
 # Enable logging
 logger:
-  level: INFO
+  level: INFO # Set to DEBUG if you are having issues!
   baud_rate: 0 # disable logging over uart
 
 # Enable Home Assistant API
@@ -44,9 +42,12 @@ web_server:
 #    username: admin
 #    password: "${device_password}"
 
+external_components:
+  - source: components
+
 switch:
   - platform: gpio
-    id: p1_cts
+    id: p1_rts # Not needed if the RTS signal is not connected to a GPIO
     pin:
       number: D2
   - platform: gpio
@@ -55,16 +56,8 @@ switch:
       number: D4
       inverted: true
 
-binary_sensor:
-  - platform: gpio
-    id: secondary_p1_rts
-    pin:
-      number: D0
-      mode: INPUT_PULLDOWN
-      inverted: false
-
 uart:
-  id: uart_bus
+  id: my_uart
   tx_pin:
     number: TX
     inverted: true
@@ -76,144 +69,159 @@ uart:
   baud_rate: 115200
   rx_buffer_size: 512 # Probably not needed, but it is good to have some margin.
 
-number:
-  - platform: template
-    name: "${device_name} update period"
-    id: p1_period
-    icon: "mdi:timer"
-    unit_of_measurement: s
-    optimistic: true
-    restore_value: true
-    min_value: 0
-    max_value: 20
-    step: 0.25
-    initial_value: 2 # Set to your desired update period (in seconds)
-    internal: false # Set to true to hide setting from Home Assistant etc.
-
-
+p1_mini:
+  id: p1_mini_1
+  uart_id: my_uart
+  minimum_period: 2s # Should be 0 (zero) if the RTS signal is not connected.
+  secondary_p1: false
+  on_ready_to_receive:
+    then:
+      - switch.turn_on: p1_rts
+      - switch.turn_on: status_led
+  on_update_received:
+    then:
+      - switch.turn_off: p1_rts
+      - switch.turn_off: status_led
+  on_communication_error:
+    then:
+      - switch.turn_off: p1_rts
+      - switch.turn_off: status_led
 
 sensor:
 - platform: wifi_signal
   name: "${device_name} WiFi Signal"
   update_interval: 10s
-- platform: custom
-  lambda: |-
-    auto meter_sensor = new P1Reader(
-      id(uart_bus),
-      id(p1_period),
-      id(p1_cts),
-      id(status_led),
-      id(secondary_p1_rts)
-    );
-    App.register_component(meter_sensor);
-    return {
-      meter_sensor->AddSensor( 1, 8, 0),
-      meter_sensor->AddSensor( 2, 8, 0),
-      meter_sensor->AddSensor( 3, 8, 0),
-      meter_sensor->AddSensor( 4, 8, 0),
-      meter_sensor->AddSensor( 1, 7, 0),
-      meter_sensor->AddSensor( 2, 7, 0),
-      meter_sensor->AddSensor( 3, 7, 0),
-      meter_sensor->AddSensor( 4, 7, 0),
-      meter_sensor->AddSensor(21, 7, 0),
-      meter_sensor->AddSensor(22, 7, 0),
-      meter_sensor->AddSensor(41, 7, 0),
-      meter_sensor->AddSensor(42, 7, 0),
-      meter_sensor->AddSensor(61, 7, 0),
-      meter_sensor->AddSensor(62, 7, 0),
-      meter_sensor->AddSensor(23, 7, 0),
-      meter_sensor->AddSensor(24, 7, 0),
-      meter_sensor->AddSensor(43, 7, 0),
-      meter_sensor->AddSensor(44, 7, 0),
-      meter_sensor->AddSensor(63, 7, 0),
-      meter_sensor->AddSensor(64, 7, 0),
-      meter_sensor->AddSensor(32, 7, 0),
-      meter_sensor->AddSensor(52, 7, 0),
-      meter_sensor->AddSensor(72, 7, 0),
-      meter_sensor->AddSensor(31, 7, 0),
-      meter_sensor->AddSensor(51, 7, 0),
-      meter_sensor->AddSensor(71, 7, 0)
-    };
-  sensors:
-  - name: "Cumulative Active Import"
-    unit_of_measurement: kWh
-    accuracy_decimals: 3
-    state_class: "total_increasing"
-    device_class: "energy"
-  - name: "Cumulative Active Export"
-    unit_of_measurement: kWh
-    accuracy_decimals: 3
-    state_class: "total_increasing"
-    device_class: "energy"
-  - name: "Cumulative Reactive Import"
-    unit_of_measurement: kvarh
-    accuracy_decimals: 3
-  - name: "Cumulative Reactive Export"
-    unit_of_measurement: kvarh
-    accuracy_decimals: 3
-  - name: "Momentary Active Import"
-    unit_of_measurement: kW
-    accuracy_decimals: 3
-  - name: "Momentary Active Export"
-    unit_of_measurement: kW
-    accuracy_decimals: 3
-  - name: "Momentary Reactive Import"
-    unit_of_measurement: kvar
-    accuracy_decimals: 3
-  - name: "Momentary Reactive Export"
-    unit_of_measurement: kvar
-    accuracy_decimals: 3
-  - name: "Momentary Active Import Phase 1"
-    unit_of_measurement: kW
-    accuracy_decimals: 3
-  - name: "Momentary Active Export Phase 1"
-    unit_of_measurement: kW
-    accuracy_decimals: 3
-  - name: "Momentary Active Import Phase 2"
-    unit_of_measurement: kW
-    accuracy_decimals: 3
-  - name: "Momentary Active Export Phase 2"
-    unit_of_measurement: kW
-    accuracy_decimals: 3
-  - name: "Momentary Active Import Phase 3"
-    unit_of_measurement: kW
-    accuracy_decimals: 3
-  - name: "Momentary Active Export Phase 3"
-    unit_of_measurement: kW
-    accuracy_decimals: 3
-  - name: "Momentary Reactive Import Phase 1"
-    unit_of_measurement: kvar
-    accuracy_decimals: 3
-  - name: "Momentary Reactive Export Phase 1"
-    unit_of_measurement: kvar
-    accuracy_decimals: 3
-  - name: "Momentary Reactive Import Phase 2"
-    unit_of_measurement: kvar
-    accuracy_decimals: 3
-  - name: "Momentary Reactive Export Phase 2"
-    unit_of_measurement: kvar
-    accuracy_decimals: 3
-  - name: "Momentary Reactive Import Phase 3"
-    unit_of_measurement: kvar
-    accuracy_decimals: 3
-  - name: "Momentary Reactive Export Phase 3"
-    unit_of_measurement: kvar
-    accuracy_decimals: 3
-  - name: "Voltage Phase 1"
-    unit_of_measurement: V
-    accuracy_decimals: 1
-  - name: "Voltage Phase 2"
-    unit_of_measurement: V
-    accuracy_decimals: 1
-  - name: "Voltage Phase 3"
-    unit_of_measurement: V
-    accuracy_decimals: 1
-  - name: "Current Phase 1"
-    unit_of_measurement: A
-    accuracy_decimals: 1
-  - name: "Current Phase 2"
-    unit_of_measurement: A
-    accuracy_decimals: 1
-  - name: "Current Phase 3"
-    unit_of_measurement: A
-    accuracy_decimals: 1
+- platform: p1_mini
+  obis_code: "1.8.0"
+  name: "Cumulative Active Import"
+  unit_of_measurement: kWh
+  accuracy_decimals: 3
+  state_class: "total_increasing"
+  device_class: "energy"
+- platform: p1_mini
+  obis_code: "2.8.0"
+  name: "Cumulative Active Export"
+  unit_of_measurement: kWh
+  accuracy_decimals: 3
+  state_class: "total_increasing"
+  device_class: "energy"
+- platform: p1_mini
+  obis_code: "3.8.0"
+  name: "Cumulative Reactive Import"
+  unit_of_measurement: kvarh
+  accuracy_decimals: 3
+- platform: p1_mini
+  obis_code: "4.8.0"
+  name: "Cumulative Reactive Export"
+  unit_of_measurement: kvarh
+  accuracy_decimals: 3
+- platform: p1_mini
+  obis_code: "1.7.0"
+  name: "Momentary Active Import"
+  unit_of_measurement: kW
+  accuracy_decimals: 3
+- platform: p1_mini
+  obis_code: "2.7.0"
+  name: "Momentary Active Export"
+  unit_of_measurement: kW
+  accuracy_decimals: 3
+- platform: p1_mini
+  obis_code: "3.7.0"
+  name: "Momentary Reactive Import"
+  unit_of_measurement: kvar
+  accuracy_decimals: 3
+- platform: p1_mini
+  obis_code: "4.7.0"
+  name: "Momentary Reactive Export"
+  unit_of_measurement: kvar
+  accuracy_decimals: 3
+- platform: p1_mini
+  obis_code: "21.7.0"
+  name: "Momentary Active Import Phase 1"
+  unit_of_measurement: kW
+  accuracy_decimals: 3
+- platform: p1_mini
+  obis_code: "22.7.0"
+  name: "Momentary Active Export Phase 1"
+  unit_of_measurement: kW
+  accuracy_decimals: 3
+- platform: p1_mini
+  obis_code: "41.7.0"
+  name: "Momentary Active Import Phase 2"
+  unit_of_measurement: kW
+  accuracy_decimals: 3
+- platform: p1_mini
+  obis_code: "42.7.0"
+  name: "Momentary Active Export Phase 2"
+  unit_of_measurement: kW
+  accuracy_decimals: 3
+- platform: p1_mini
+  obis_code: "61.7.0"
+  name: "Momentary Active Import Phase 3"
+  unit_of_measurement: kW
+  accuracy_decimals: 3
+- platform: p1_mini
+  obis_code: "62.7.0"
+  name: "Momentary Active Export Phase 3"
+  unit_of_measurement: kW
+  accuracy_decimals: 3
+- platform: p1_mini
+  obis_code: "23.7.0"
+  name: "Momentary Reactive Import Phase 1"
+  unit_of_measurement: kvar
+  accuracy_decimals: 3
+- platform: p1_mini
+  obis_code: "24.7.0"
+  name: "Momentary Reactive Export Phase 1"
+  unit_of_measurement: kvar
+  accuracy_decimals: 3
+- platform: p1_mini
+  obis_code: "43.7.0"
+  name: "Momentary Reactive Import Phase 2"
+  unit_of_measurement: kvar
+  accuracy_decimals: 3
+- platform: p1_mini
+  obis_code: "44.7.0"
+  name: "Momentary Reactive Export Phase 2"
+  unit_of_measurement: kvar
+  accuracy_decimals: 3
+- platform: p1_mini
+  obis_code: "63.7.0"
+  name: "Momentary Reactive Import Phase 3"
+  unit_of_measurement: kvar
+  accuracy_decimals: 3
+- platform: p1_mini
+  obis_code: "64.7.0"
+  name: "Momentary Reactive Export Phase 3"
+  unit_of_measurement: kvar
+  accuracy_decimals: 3
+- platform: p1_mini
+  obis_code: "32.7.0"
+  name: "Voltage Phase 1"
+  unit_of_measurement: V
+  accuracy_decimals: 1
+- platform: p1_mini
+  obis_code: "52.7.0"
+  name: "Voltage Phase 2"
+  unit_of_measurement: V
+  accuracy_decimals: 1
+- platform: p1_mini
+  obis_code: "72.7.0"
+  name: "Voltage Phase 3"
+  unit_of_measurement: V
+  accuracy_decimals: 1
+- platform: p1_mini
+  obis_code: "31.7.0"
+  name: "Current Phase 1"
+  unit_of_measurement: A
+  accuracy_decimals: 1
+- platform: p1_mini
+  obis_code: "51.7.0"
+  name: "Current Phase 2"
+  unit_of_measurement: A
+  accuracy_decimals: 1
+- platform: p1_mini
+  obis_code: "71.7.0"
+  name: "Current Phase 3"
+  unit_of_measurement: A
+  accuracy_decimals: 1

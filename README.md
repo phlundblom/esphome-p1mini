@@ -7,11 +7,16 @@ Notable differences from esphome-p1reader are:
 * Code rewritten to not spend excessive amounts of time in calls to the `loop` function. This should ensure stable operation of ESPHome and might help prevent some serial communication issues.
 * Now (Sep 2022) also supports the binary format used by some meters.
 
-## ESPHome version
+## Rewrite from custom component to external component
 > [!WARNING]
-> Custom components, such as this one, are deprecated by ESPHome according to [this page](https://esphome.io/components/sensor/custom) and are expected to stop working in future releases of ESPHome. The current version is tested with ESPHome version `2023.12.5`.
+> This project has recently been rewritten from beeing a [custom component](https://esphome.io/components/sensor/custom), because these are deprecated, into an [external component](https://esphome.io/components/external_components). As a result there are some differences and there could be bugs introduced by the rewrite.
 
-I am working on converting this into an [External component](https://esphome.io/components/external_components), but there is currently no estimate on when that might be done!
+Changes as a result of the rewrite include:
+* The update period can no longer be changed dynamically. A rebuild is needed to change it.
+* When passing data to a secondary P1-port, the RTS signal of the secondary reader is ignored. When the secondary port is enabled, data is allways passed on, even if the secondary device is not requesting it.
+
+## ESPHome version
+The current version is tested with ESPHome version `2023.12.9`.
 
 ## Verified meter hardware / supplier
 * [Sagemcom T211](https://www.ellevio.se/globalassets/content/el/elmatare-produktblad-b2c/ellevio_produktblad_fas3_t211_web2.pdf) / Ellevio, Skånska Energi
@@ -56,6 +61,9 @@ Some hot-melt glue and heat shrink tubing will make it more robust though.
 
 ## P1 Passthrough
 It is possible to attach another P1 reading device in case you need to connect a car charger (or a second p1-mini...) etc. If you have no need for this, you can skip this section and continue with "Installation" below.
+
+> [!WARNING]
+> Currently, the RTS signal of the secondary device is ignored.
 
 ### Parts
 - Female connector for the RJ12 cable.
