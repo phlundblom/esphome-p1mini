@@ -21,8 +21,8 @@ The current version is tested with ESPHome version `2023.12.9`.
 ## Verified meter hardware / supplier
 * [Sagemcom T211](https://www.ellevio.se/globalassets/content/el/elmatare-produktblad-b2c/ellevio_produktblad_fas3_t211_web2.pdf) / Ellevio, Skånska Energi
 * [Aidon 6534](https://jonkopingenergi.se/storage/B9A468B538E9CF48DF5E276BDA7D2D12727D152110286963E9D603D67B849242/5009da534dbc44b6a34cb0bed31cfd5c/pdf/media/b53a4057862646cbb22702a847a291a2/Aidon%206534%20bruksansvisning.pdf) with RJ12/P1-port module (*not* RJ45/NVE module) / SEVAB
-* [Landis+Gyr E360](https://eu.landisgyr.com/blog-se/e360-en-smart-matare-som-optimerarden-totala-agandekostnaden) / E.ON
-* [S34U18 (Sanxing SX631)](https://www.vattenfalleldistribution.se/matarbyte/nya-elmataren/) / Vattenfall - [But read this](NO-RTS.md)
+* [Landis+Gyr E360](https://eu.landisgyr.com/blog-se/e360-en-smart-matare-som-optimerarden-totala-agandekostnaden) / E.ON - [But read this](NO-RTS.md#landisgyr-e360)
+* [S34U18 (Sanxing SX631)](https://www.vattenfalleldistribution.se/matarbyte/nya-elmataren/) / Vattenfall - [But read this](NO-RTS.md#s34u18-sanxing-sx631)
 * Kamstrup OMNIPOWER
 
 ## Meters verified with esphome-p1reader, which should work too...
@@ -35,7 +35,7 @@ I have used a D1 mini clone, but most ESP-based controllers should work as long 
 
 ESP32 based boards draw more power, which may cause a problem with the supply from the meter and generally offer no advantage over ESP8266 based boards.
 
-If you have pre built hardware which does not connect the RTS signal to a GPIO, [read this](NO-RTS.md).
+If you have pre built hardware which does not connect the RTS signal to a GPIO, [read this](NO-RTS.md#rts-not-attached-to-a-gpio).
 
 ### Parts
 - 1 (Wemos) D1 mini or clone.
@@ -63,7 +63,7 @@ Some hot-melt glue and heat shrink tubing will make it more robust though.
 It is possible to attach another P1 reading device in case you need to connect a car charger (or a second p1-mini...) etc. If you have no need for this, you can skip this section and continue with "Installation" below.
 
 > [!WARNING]
-> Currently, the RTS signal of the secondary device is ignored.
+> Currently, the RTS signal of the secondary device is ignored. If you are using the secondary port *and* this is a problem, let me know and I will try to fix it!
 
 ### Parts
 - Female connector for the RJ12 cable.
@@ -86,7 +86,7 @@ Power to the secondary port needs to be supplied from a secondary source (Like a
 
 ### Limitations
 
-Updates are only sent to the secondary port right after they have been received and processed (if the secondary device is requesting updates via the RTS signal). That means that if the d1mini is set to only update every 15 seconds, the secondary device can not get updates more frequently than that.
+The RTS signal of the secondaty port is ignored and all data is passed along as soon as it is received, regardless if the secondary device is ready to receive or not.
 
 ## Installation
 Clone the repository and create a companion `secrets.yaml` file with the following fields:
@@ -96,9 +96,26 @@ wifi_password: <your wifi password>
 p1mini_password: <Your p1mini password (for OTA, etc)>
 p1mini_api_key: <Home Assistant API key>
 ```
-Make sure to place the `secrets.yaml` file in the root path of the cloned project. The `p1mini_password` field can be set to any password before doing the initial upload of the firmware.
+The `p1mini_password` field can be set to any password before doing the initial upload of the firmware. A new API key can be generated on [this page](https://esphome.io/components/api.html).
 
-Flash ESPHome as usual, just keep the `p1mini.h` file in the same location as `p1mini.yaml` (and `secrets.yaml`). *Don't* connect USB and the P1 port at the same time! If everything works, Home Assistant will autodetect the new integration after you plug it into the P1 port.
+The file structure should include these files:
+
+```
+|- p1min.yaml
+|- secrets.yaml
+|- components
+   |- p1mini
+      |- __init__.py
+      |- p1_mini.cpp
+      |- p1_mini.h
+      |- sensor
+         |- __init__.py
+         |- p1_mini_sensor.cpp
+         |- p1_mini_sensor.h
+```
+
+
+Flash ESPHome as usual, with the relevant files in place. *Don't* connect USB and the P1 port at the same time! If everything works, Home Assistant will autodetect the new integration after you plug it into the P1 port.
 
 If you do not receive any data, make sure that the P1 port is enabled on your meter and try setting the log level to `DEBUG` in ESPHome for more feedback.
 
