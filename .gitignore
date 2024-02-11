@@ -1,5 +1,6 @@
-secrets.yaml
-.esphome
+/secrets.yaml
+/.esphome
 electricity_meter
-*.sh
+/*.sh
 .vs
+__pycache__
