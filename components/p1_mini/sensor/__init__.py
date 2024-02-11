@@ -7,15 +7,8 @@ from .. import CONF_P1_MINI_ID, CONF_OBIS_CODE, P1Mini, obis_code, p1_mini_ns
 
 AUTO_LOAD = ["p1_mini"]
 
-ValueFormat = p1_mini_ns.enum("ValueFormat")
-VALUE_FORMAT_TYPES = {
-    "float": ValueFormat.ValueFormat_Float,
-    "hex": ValueFormat.ValueFormat_Hex,
-}
-
 P1MiniSensor = p1_mini_ns.class_(
     "P1MiniSensor", sensor.Sensor, cg.Component)
-
 
 CONFIG_SCHEMA = sensor.sensor_schema().extend(
     {
@@ -24,7 +17,6 @@ CONFIG_SCHEMA = sensor.sensor_schema().extend(
         cv.Required(CONF_OBIS_CODE): cv.string
     }
 )
-
 
 async def to_code(config):
     var = cg.new_Pvariable(
