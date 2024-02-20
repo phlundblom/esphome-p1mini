@@ -33,7 +33,7 @@ namespace esphome {
 
         class P1Mini : public uart::UARTDevice, public Component {
         public:
-            P1Mini(uint32_t min_period_ms, bool secondary_p1);
+            P1Mini(uint32_t min_period_ms, int buffer_size, bool secondary_p1);
 
             void setup() override;
             void loop() override;
@@ -62,8 +62,9 @@ namespace esphome {
             uint32_t obis_code{ 0x00 };
 
             // Store the message as it is being received:
-            constexpr static int message_buffer_size{ 2048 };
-            char m_message_buffer[message_buffer_size];
+            std::unique_ptr<char> m_message_buffer_UP;
+            int m_message_buffer_size;
+            char *m_message_buffer{ nullptr };
             int m_message_buffer_position{ 0 };
             int m_crc_position{ 0 };
 

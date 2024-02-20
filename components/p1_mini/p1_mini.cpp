@@ -91,11 +91,23 @@ namespace esphome {
             if (m_obis == OBIS_ERROR) ESP_LOGE(TAG, "Not a valid OBIS code: '%s'", obis_code.c_str());
         }
 
-        P1Mini::P1Mini(uint32_t min_period_ms, bool secondary_p1)
+        P1Mini::P1Mini(uint32_t min_period_ms, int buffer_size, bool secondary_p1)
             : m_error_recovery_time{ millis() }
+            , m_message_buffer_size{ buffer_size }
             , m_min_period_ms{ min_period_ms }
             , m_secondary_p1{ secondary_p1 }
-        {}
+        {
+            m_message_buffer = new char[m_message_buffer_size];
+            if (m_message_buffer == nullptr) {
+                ESP_LOGE(TAG, "Failed to allocate %d bytes for buffer.", m_message_buffer_size);
+                static char dummy[2];
+                m_message_buffer = dummy;
+                m_message_buffer_size = 2;
+            }
+            else {
+                m_message_buffer_UP.reset(m_message_buffer);
+            }
+        }
 
         void P1Mini::setup() {
             //ESP_LOGD("P1Mini", "setup()");
@@ -173,7 +185,7 @@ namespace esphome {
                             return;
                         }
                     }
-                    if (m_message_buffer_position == message_buffer_size) {
+                    if (m_message_buffer_position == m_message_buffer_size) {
                         ESP_LOGW(TAG, "Message buffer overrun. Resetting.");
                         ChangeState(states::ERROR_RECOVERY);
                         return;
@@ -357,13 +369,14 @@ namespace esphome {
             case states::WAITING:
                 if (m_display_time_stats) {
                     m_display_time_stats = false;
-                    ESP_LOGD(TAG, "Cycle times: Identifying = %d ms, Message = %d ms (%d loops), Processing = %d ms (%d loops), (Total = %d ms)",
+                    ESP_LOGD(TAG, "Cycle times: Identifying = %d ms, Message = %d ms (%d loops), Processing = %d ms (%d loops), (Total = %d ms). %d bytes in buffer",
                         m_reading_message_time - m_identifying_message_time,
                         m_processing_time - m_reading_message_time,
                         m_num_message_loops,
                         m_waiting_time - m_processing_time,
                         m_num_processing_loops,
-                        m_waiting_time - m_identifying_message_time
+                        m_waiting_time - m_identifying_message_time,
+                        m_message_buffer_position
                     );
                 }
                 if (m_min_period_ms < loop_start_time - m_identifying_message_time) {
