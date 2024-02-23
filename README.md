@@ -84,7 +84,7 @@ A p1mini wired up with a secondary port (unpowered) on an experimental board:
 
 ### Power to the secondary port
 
-Power to the secondary port needs to be supplied from a secondary source (Like an USB charger). Unless the secondary device is already powered (like a car charger etc) in which case it may not be necessary to supply any power at all to the secondary port.
+Power to the secondary port needs to be supplied from a secondary source (such as an USB charger). Unless the secondary device is already powered (like a car charger etc) in which case it may not be necessary to supply any power at all to the secondary port.
 
 ### Limitations
 
@@ -103,7 +103,7 @@ The `p1mini_password` field can be set to any password before doing the initial 
 The file structure should include these files:
 
 ```
-|- p1min.yaml
+|- p1mini.yaml
 |- secrets.yaml
 |- components
    |- p1mini
