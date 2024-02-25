@@ -18,7 +18,7 @@ Changes as a result of the rewrite include:
 The custom component based code is available in the `custom-component` branch.
 
 ## ESPHome version
-The current version is tested with ESPHome version `2023.12.9`.
+The current version is tested with ESPHome version `2024.2.0`.
 
 ## Verified meter hardware / supplier
 * [Sagemcom T211](https://www.ellevio.se/globalassets/content/el/elmatare-produktblad-b2c/ellevio_produktblad_fas3_t211_web2.pdf) / Ellevio, Skånska Energi
