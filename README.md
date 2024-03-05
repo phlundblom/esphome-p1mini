@@ -32,6 +32,9 @@ The current version is tested with ESPHome version `2024.2.0`.
 * [KAIFA MA304H4E](https://reko.nackaenergi.se/elmatarbyte/) / Nacka Energi
 * [KAIFA CL109](https://www.oresundskraft.se/dags-for-matarbyte/) / Öresundskraft
 
+## Meters with issues
+* [SWEMET / Shenzhen Star - STZ351](https://www.veab.se/globalassets/dokumentarkiv/manualer-och-skotselrad/anvandarmanual-elmatare-3-fas.pdf): Seems to have an incorrectly formatted message and incorrectly calculated checksum. A possible workaround is discussed [here](https://github.com/Beaky2000/esphome-p1mini/issues/26).
+
 ## Hardware
 I have used a D1 mini clone, but most ESP-based controllers should work as long as you figure out appropriate pins to use. The P1 port on the meter provides 5V up to 250mA which makes it possible to power the circuit directly from the P1 port.
 
