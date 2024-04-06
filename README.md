@@ -8,8 +8,7 @@ Notable differences from esphome-p1reader are:
 * Now (Sep 2022) also supports the binary format used by some meters.
 
 ## Rewrite from custom component to external component
-> [!WARNING]
-> This project has recently been rewritten from beeing a [custom component](https://esphome.io/components/sensor/custom), because these are deprecated, into an [external component](https://esphome.io/components/external_components). As a result there are some differences and there could be bugs introduced by the rewrite.
+This project has recently been rewritten from beeing a [custom component](https://esphome.io/components/sensor/custom), because these are deprecated, into an [external component](https://esphome.io/components/external_components). As a result there are some differences and there could be bugs introduced by the rewrite.
 
 Changes as a result of the rewrite include:
 * The update period can no longer be changed dynamically. A rebuild is needed to change it.
@@ -18,7 +17,7 @@ Changes as a result of the rewrite include:
 The custom component based code is available in the `custom-component` branch.
 
 ## ESPHome version
-The current version is tested with ESPHome version `2024.2.0`.
+The current version is tested with ESPHome version `2024.3.0`.
 
 ## Verified meter hardware / supplier
 * [Sagemcom T211](https://www.ellevio.se/globalassets/content/el/elmatare-produktblad-b2c/ellevio_produktblad_fas3_t211_web2.pdf) / Ellevio, Skånska Energi
