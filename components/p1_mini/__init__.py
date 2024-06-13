@@ -5,6 +5,9 @@ from esphome.const import CONF_ID, CONF_TRIGGER_ID
 from esphome import automation
 
 DEPENDENCIES = ['uart']
+p1_mini_ns = cg.esphome_ns.namespace('p1_mini')
+P1Mini = p1_mini_ns.class_('P1Mini', cg.Component, uart.UARTDevice)
+MULTI_CONF = True
 
 CONF_P1_MINI_ID = "p1_mini_id"
 CONF_OBIS_CODE = "obis_code"
@@ -15,8 +18,7 @@ CONF_ON_READY_TO_RECEIVE = "on_ready_to_receive"
 CONF_ON_UPDATE_RECEIVED = "on_update_received"
 CONF_ON_COMMUNICATION_ERROR = "on_communication_error"
 
-p1_mini_ns = cg.esphome_ns.namespace('p1_mini')
-P1Mini = p1_mini_ns.class_('P1Mini', cg.Component, uart.UARTDevice)
+
 
 # Triggers
 ReadyToReceiveTrigger = p1_mini_ns.class_("ReadyToReceiveTrigger", automation.Trigger.template())

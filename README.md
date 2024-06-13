@@ -17,7 +17,7 @@ Changes as a result of the rewrite include:
 The custom component based code is available in the `custom-component` branch.
 
 ## ESPHome version
-The current version is tested with ESPHome version `2024.3.0`.
+The current version is tested with ESPHome version `2024.5.5`.
 
 ## Verified meter hardware / supplier
 * [Sagemcom T211](https://www.ellevio.se/globalassets/content/el/elmatare-produktblad-b2c/ellevio_produktblad_fas3_t211_web2.pdf) / Ellevio, Skånska Energi
@@ -37,7 +37,7 @@ The current version is tested with ESPHome version `2024.3.0`.
 ## Hardware
 I have used a D1 mini clone, but most ESP-based controllers should work as long as you figure out appropriate pins to use. The P1 port on the meter provides 5V up to 250mA which makes it possible to power the circuit directly from the P1 port.
 
-ESP32 based boards draw more power, which may cause a problem with the supply from the meter and generally offer no advantage over ESP8266 based boards.
+ESP32 based boards draw more power, which may cause a problem with the supply from the meter and generally offer no advantage over ESP8266 based boards. The exception is when connecting the same ESP module to several power meters in which case the multiple UARTs of the ESP32 are needed.
 
 If you have pre built hardware which does not connect the RTS signal to a GPIO, [read this](NO-RTS.md#rts-not-attached-to-a-gpio).
 

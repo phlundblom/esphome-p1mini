@@ -64,42 +64,48 @@ binary_sensor:
       inverted: false
 
 uart:
-  id: my_uart
-  tx_pin:
-    number: TX
-    inverted: true
-    mode: OUTPUT_OPEN_DRAIN
-  rx_pin:
-    number: RX
-    inverted: true         # Set to false if inverting in hardware
-    mode: INPUT_PULLUP     # Set to INPUT if inverting in hardware
-  baud_rate: 115200
-  rx_buffer_size: 512      # Probably not needed, but it is good to have some margin.
+  - id: my_uart_1
+    tx_pin:
+      number: TX
+      inverted: true
+      mode: OUTPUT_OPEN_DRAIN
+    rx_pin:
+      number: RX
+      inverted: true         # Set to false if inverting in hardware
+      mode: INPUT_PULLUP     # Set to INPUT if inverting in hardware
+    baud_rate: 115200
+    rx_buffer_size: 512      # Probably not needed, but it is good to have some margin.
+#  - id: my_uart_2
+#    ...
 
 p1_mini:
-  id: p1_mini_1
-  uart_id: my_uart
-  minimum_period: 2s       # Should be 0 (zero) if the RTS signal is not used.
-  buffer_size: 3072        # Needs to be large enough to hold one entire update from the meter.
-  secondary_p1: false
-  on_ready_to_receive:
-    then:
-      - switch.turn_on: p1_rts
-      - switch.turn_on: status_led
-  on_update_received:
-    then:
-      - switch.turn_off: p1_rts
-      - switch.turn_off: status_led
-  on_communication_error:
-    then:
-      - switch.turn_off: p1_rts
-      - switch.turn_off: status_led
+  - id: p1_mini_1
+    uart_id: my_uart_1
+    minimum_period: 2s       # Should be 0 (zero) if the RTS signal is not used.
+    buffer_size: 3072        # Needs to be large enough to hold one entire update from the meter.
+    secondary_p1: false
+    on_ready_to_receive:
+      then:
+        - switch.turn_on: p1_rts
+        - switch.turn_on: status_led
+    on_update_received:
+      then:
+        - switch.turn_off: p1_rts
+        - switch.turn_off: status_led
+    on_communication_error:
+      then:
+        - switch.turn_off: p1_rts
+        - switch.turn_off: status_led
+#  - id: p1_mini_2
+#    uart_id: my_uart_2
+#    ...
 
 sensor:
 - platform: wifi_signal
   name: "${device_name} WiFi Signal"
   update_interval: 10s
 - platform: p1_mini
+  p1_mini_id: p1_mini_1
   obis_code: "1.8.0"
   name: "Cumulative Active Import"
   unit_of_measurement: kWh
@@ -107,6 +113,7 @@ sensor:
   state_class: "total_increasing"
   device_class: "energy"
 - platform: p1_mini
+  p1_mini_id: p1_mini_1
   obis_code: "2.8.0"
   name: "Cumulative Active Export"
   unit_of_measurement: kWh
@@ -114,122 +121,155 @@ sensor:
   state_class: "total_increasing"
   device_class: "energy"
 - platform: p1_mini
+  p1_mini_id: p1_mini_1
   obis_code: "3.8.0"
   name: "Cumulative Reactive Import"
   unit_of_measurement: kvarh
   accuracy_decimals: 3
 - platform: p1_mini
+  p1_mini_id: p1_mini_1
   obis_code: "4.8.0"
   name: "Cumulative Reactive Export"
   unit_of_measurement: kvarh
   accuracy_decimals: 3
 - platform: p1_mini
+  p1_mini_id: p1_mini_1
   obis_code: "1.7.0"
   name: "Momentary Active Import"
   unit_of_measurement: kW
   accuracy_decimals: 3
 - platform: p1_mini
+  p1_mini_id: p1_mini_1
   obis_code: "2.7.0"
   name: "Momentary Active Export"
   unit_of_measurement: kW
   accuracy_decimals: 3
 - platform: p1_mini
+  p1_mini_id: p1_mini_1
   obis_code: "3.7.0"
   name: "Momentary Reactive Import"
   unit_of_measurement: kvar
   accuracy_decimals: 3
 - platform: p1_mini
+  p1_mini_id: p1_mini_1
   obis_code: "4.7.0"
   name: "Momentary Reactive Export"
   unit_of_measurement: kvar
   accuracy_decimals: 3
 - platform: p1_mini
+  p1_mini_id: p1_mini_1
   obis_code: "21.7.0"
   name: "Momentary Active Import Phase 1"
   unit_of_measurement: kW
   accuracy_decimals: 3
 - platform: p1_mini
+  p1_mini_id: p1_mini_1
   obis_code: "22.7.0"
   name: "Momentary Active Export Phase 1"
   unit_of_measurement: kW
   accuracy_decimals: 3
 - platform: p1_mini
+  p1_mini_id: p1_mini_1
   obis_code: "41.7.0"
   name: "Momentary Active Import Phase 2"
   unit_of_measurement: kW
   accuracy_decimals: 3
 - platform: p1_mini
+  p1_mini_id: p1_mini_1
   obis_code: "42.7.0"
   name: "Momentary Active Export Phase 2"
   unit_of_measurement: kW
   accuracy_decimals: 3
 - platform: p1_mini
+  p1_mini_id: p1_mini_1
   obis_code: "61.7.0"
   name: "Momentary Active Import Phase 3"
   unit_of_measurement: kW
   accuracy_decimals: 3
 - platform: p1_mini
+  p1_mini_id: p1_mini_1
   obis_code: "62.7.0"
   name: "Momentary Active Export Phase 3"
   unit_of_measurement: kW
   accuracy_decimals: 3
 - platform: p1_mini
+  p1_mini_id: p1_mini_1
   obis_code: "23.7.0"
   name: "Momentary Reactive Import Phase 1"
   unit_of_measurement: kvar
   accuracy_decimals: 3
 - platform: p1_mini
+  p1_mini_id: p1_mini_1
   obis_code: "24.7.0"
   name: "Momentary Reactive Export Phase 1"
   unit_of_measurement: kvar
   accuracy_decimals: 3
 - platform: p1_mini
+  p1_mini_id: p1_mini_1
   obis_code: "43.7.0"
   name: "Momentary Reactive Import Phase 2"
   unit_of_measurement: kvar
   accuracy_decimals: 3
 - platform: p1_mini
+  p1_mini_id: p1_mini_1
   obis_code: "44.7.0"
   name: "Momentary Reactive Export Phase 2"
   unit_of_measurement: kvar
   accuracy_decimals: 3
 - platform: p1_mini
+  p1_mini_id: p1_mini_1
   obis_code: "63.7.0"
   name: "Momentary Reactive Import Phase 3"
   unit_of_measurement: kvar
   accuracy_decimals: 3
 - platform: p1_mini
+  p1_mini_id: p1_mini_1
   obis_code: "64.7.0"
   name: "Momentary Reactive Export Phase 3"
   unit_of_measurement: kvar
   accuracy_decimals: 3
 - platform: p1_mini
+  p1_mini_id: p1_mini_1
   obis_code: "32.7.0"
   name: "Voltage Phase 1"
   unit_of_measurement: V
   accuracy_decimals: 1
 - platform: p1_mini
+  p1_mini_id: p1_mini_1
   obis_code: "52.7.0"
   name: "Voltage Phase 2"
   unit_of_measurement: V
   accuracy_decimals: 1
 - platform: p1_mini
+  p1_mini_id: p1_mini_1
   obis_code: "72.7.0"
   name: "Voltage Phase 3"
   unit_of_measurement: V
   accuracy_decimals: 1
 - platform: p1_mini
+  p1_mini_id: p1_mini_1
   obis_code: "31.7.0"
   name: "Current Phase 1"
   unit_of_measurement: A
   accuracy_decimals: 1
 - platform: p1_mini
+  p1_mini_id: p1_mini_1
   obis_code: "51.7.0"
   name: "Current Phase 2"
   unit_of_measurement: A
   accuracy_decimals: 1
 - platform: p1_mini
+  p1_mini_id: p1_mini_1
   obis_code: "71.7.0"
   name: "Current Phase 3"
   unit_of_measurement: A
   accuracy_decimals: 1
+#- platform: p1_mini
+#  p1_mini_id: p1_mini_2
+#  obis_code: "1.8.0"
+#  name: "Cumulative Active Import"
+#  unit_of_measurement: kWh
+#  accuracy_decimals: 3
+#  state_class: "total_increasing"
+#  device_class: "energy"
+#  ...
