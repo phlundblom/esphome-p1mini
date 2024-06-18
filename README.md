@@ -1,20 +1,13 @@
 # esphome-p1mini
 Based on esphome-p1reader, which is an ESPHome custom component for reading P1 data from electricity meters. Designed for Swedish meters that implements the specification defined in the [Swedish Energy Industry Recommendation For Customer Interfaces](https://www.energiforetagen.se/forlag/elnat/branschrekommendation-for-lokalt-kundgranssnitt-for-elmatare/) version 1.3 and above.
 
+The component can be used [by itself from any config file](component_only.md) or with the config file included in the project, which matches the suggested hardware configuration for a D1-mini and is kept up to date with any updates to the component.
+
 Notable differences from esphome-p1reader are:
 * More frequent update of sensors with configurable update period (if supported by meter).
 * No additional components needed. RJ12 cable connects directly to D1Mini (or equivalent)
 * Code rewritten to not spend excessive amounts of time in calls to the `loop` function. This should ensure stable operation of ESPHome and might help prevent some serial communication issues.
-* Now (Sep 2022) also supports the binary format used by some meters.
-
-## Rewrite from custom component to external component
-This project has recently been rewritten from beeing a [custom component](https://esphome.io/components/sensor/custom), because these are deprecated, into an [external component](https://esphome.io/components/external_components). As a result there are some differences and there could be bugs introduced by the rewrite.
-
-Changes as a result of the rewrite include:
-* The update period can no longer be changed dynamically. A rebuild is needed to change it.
-* When passing data to a secondary P1-port, the RTS signal of the secondary reader is ignored. When the secondary port is enabled, data is allways passed on, even if the secondary device is not requesting it.
-
-The custom component based code is available in the `custom-component` branch.
+* Rewritten as an [external component](https://esphome.io/components/external_components) since [custom components](https://esphome.io/components/sensor/custom) are deprecated.
 
 ## ESPHome version
 The current version is tested with ESPHome version `2024.5.5`.
@@ -93,6 +86,12 @@ Power to the secondary port needs to be supplied from a secondary source (such a
 The RTS signal of the secondaty port is ignored and all data is passed along as soon as it is received, regardless if the secondary device is ready to receive or not.
 
 ## Installation
+The component can be used by itself from any config file, or with the included config file, which is kept up to date with any updates and matches the hardware configuration described for a D1-mini.
+
+### Standalone
+If you are making substantial changes to the config it may make more sense to [use the component only](component_only.md) in your config file. 
+
+### The full experience
 Clone the repository and create a companion `secrets.yaml` file with the following fields:
 ```
 wifi_ssid: <your wifi SSID>
