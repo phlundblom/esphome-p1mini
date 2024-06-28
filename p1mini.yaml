@@ -32,6 +32,7 @@ api:
     key: "${device_api_key}"
 
 ota:
+  platform: esphome # Remove this line to run on ESPHome versions earlier than 2022.6.0
   password: "${device_password}"
 
 web_server:
