@@ -73,7 +73,7 @@ namespace esphome {
 
             char GetByte()
             {
-                char C{ static_cast<char>(read()) };
+                char const C{ static_cast<char>(read()) };
                 if (m_secondary_p1) write(C);
                 return C;
             }
