@@ -1,7 +1,7 @@
 # esphome-p1mini
 Based on esphome-p1reader, which is an ESPHome custom component for reading P1 data from electricity meters. Designed for Swedish meters that implements the specification defined in the [Swedish Energy Industry Recommendation For Customer Interfaces](https://www.energiforetagen.se/forlag/elnat/branschrekommendation-for-lokalt-kundgranssnitt-for-elmatare/) version 1.3 and above.
 
-The component can be used [by itself from any config file](component_only.md) or with the config file included in the project, which matches the suggested hardware configuration for a D1-mini and is kept up to date with any updates to the component.
+The component can be used [by itself from any config file](component_only.md) or with the config file included in the project, which matches the suggested hardware configuration for a D1 mini and is kept up to date with any updates to the component.
 
 Notable differences from esphome-p1reader are:
 * More frequent update of sensors with configurable update period (if supported by meter).
@@ -69,6 +69,9 @@ It is possible to attach another P1 reading device in case you need to connect a
 
 ![Secondary port pins](images/secondary_pins.png)
 
+> [!NOTE]  
+> Since the RTS signal is currenty ignored, only the TX and GND pins need to be connected. TX -> TX and GND -> Data GND.
+
 The LED will, in addition to providing visual indication that updates are beeing requested on the port, ensure that the voltage on D0 will not get high enough to damage the D1 mini. The LED needs to have a high enough voltage drop for it to work and some colors may not work.
 
 The value of the resistor is not very critical. I have tested with 3 kΩ and anything down to 1 kΩ should be fine.
@@ -81,12 +84,18 @@ A p1mini wired up with a secondary port (unpowered) on an experimental board:
 
 Power to the secondary port needs to be supplied from a secondary source (such as an USB charger). Unless the secondary device is already powered (like a car charger etc) in which case it may not be necessary to supply any power at all to the secondary port.
 
+### Configuration changes
+The feature needs to be enabled in the configuration file (yaml). Change `secondary_p1` from `false` to `true`.
+```
+  secondary_p1: true
+```
+
 ### Limitations
 
 The RTS signal of the secondaty port is ignored and all data is passed along as soon as it is received, regardless if the secondary device is ready to receive or not.
 
 ## Installation
-The component can be used by itself from any config file, or with the included config file, which is kept up to date with any updates and matches the hardware configuration described for a D1-mini.
+The component can be used by itself from any config file, or with the included config file, which is kept up to date with any updates and matches the hardware configuration described for a D1 mini.
 
 ### Standalone
 If you are making substantial changes to the config it may make more sense to [use the component only](component_only.md) in your config file. 
@@ -120,7 +129,10 @@ The file structure should include these files:
 
 Flash ESPHome as usual, with the relevant files in place. *Don't* connect USB and the P1 port at the same time! If everything works, Home Assistant will autodetect the new integration after you plug it into the P1 port.
 
-If you do not receive any data, make sure that the P1 port is enabled on your meter and try setting the log level to `DEBUG` in ESPHome for more feedback.
+Things to try if you are having problems:
+* Make sure that the P1 port is enabled on your meter
+* Set the log level to `DEBUG` in ESPHome for more feedback.
+* Access the web browser on the P1mini: (usually) http://p1mini.local/
 
 ## Technical documentation
 Specification overview:
