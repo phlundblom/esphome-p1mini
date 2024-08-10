@@ -268,7 +268,7 @@ sensor:
 #- platform: p1_mini
 #  p1_mini_id: p1_mini_2
 #  obis_code: "1.8.0"
-#  name: "Cumulative Active Import"
+#  name: "Cumulative Active Import, meter 2"
 #  unit_of_measurement: kWh
 #  accuracy_decimals: 3
 #  state_class: "total_increasing"

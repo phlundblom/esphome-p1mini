@@ -5,12 +5,12 @@ The component can be used [by itself from any config file](component_only.md) or
 
 Notable differences from esphome-p1reader are:
 * More frequent update of sensors with configurable update period (if supported by meter).
-* No additional components needed. RJ12 cable connects directly to D1Mini (or equivalent)
+* No additional components needed. RJ12 cable connects directly to D1 mini (or equivalent)
 * Code rewritten to not spend excessive amounts of time in calls to the `loop` function. This should ensure stable operation of ESPHome and might help prevent some serial communication issues.
 * Rewritten as an [external component](https://esphome.io/components/external_components) since [custom components](https://esphome.io/components/sensor/custom) are deprecated.
 
 ## ESPHome version
-The current version is tested with ESPHome version `2024.6.4` and the yaml *will not work with versions earlier than `2024.6.0`*.
+The current version is tested with ESPHome version `2024.7.3` and the yaml *will not work with versions earlier than `2024.6.0`*.
 
 ## Verified meter hardware / supplier
 * [Sagemcom T211](https://www.ellevio.se/globalassets/content/el/elmatare-produktblad-b2c/ellevio_produktblad_fas3_t211_web2.pdf) / Ellevio, Skånska Energi
@@ -39,14 +39,14 @@ If you have pre built hardware which does not connect the RTS signal to a GPIO, 
 - 1 RJ12 cable (6 wires)
 - Optionally, hot melt glue and large heat shrink tubing.
 
-### Wiring D1Mini
+### Wiring D1 mini
 Wiring is simple. Five of the pins from the connector (one pin is not used)...
 
 ![RJ12 pins](images/RJ12-pins.png)
 
-... are connected to four of the pads on the D1Mini.
+... are connected to four of the pads on the D1 mini.
 
-![D1mini pins](images/D1mini-pins.png)
+![D1 mini pins](images/D1mini-pins.png)
 
 And that is it. The result could look something like this:
 
@@ -69,7 +69,7 @@ It is possible to attach another P1 reading device in case you need to connect a
 
 ![Secondary port pins](images/secondary_pins.png)
 
-The LED will, in addition to providing visual indication that updates are beeing requested on the port, ensure that the voltage on D0 will not get high enough to damage the D1mini. The LED needs to have a high enough voltage drop for it to work and some colors may not work.
+The LED will, in addition to providing visual indication that updates are beeing requested on the port, ensure that the voltage on D0 will not get high enough to damage the D1 mini. The LED needs to have a high enough voltage drop for it to work and some colors may not work.
 
 The value of the resistor is not very critical. I have tested with 3 kΩ and anything down to 1 kΩ should be fine.
 
