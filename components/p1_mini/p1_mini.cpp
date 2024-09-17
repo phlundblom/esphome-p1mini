@@ -172,7 +172,7 @@ namespace esphome {
                     // If end of CRC is reached, start verifying CRC
                     if (m_crc_position > 0 && m_message_buffer_position > m_crc_position) {
                         if (m_data_format == data_formats::ASCII && read_byte == '\n') {
-                            ESP_LOGD(TAG, "Got in total %d bytes", m_message_buffer_position - m_message_buffer);
+                            ESP_LOGD(TAG, "Got in total %d bytes, CRC starts at %d", m_message_buffer_position, m_crc_position);
                             ChangeState(states::VERIFYING_CRC);
                             return;
                         }
